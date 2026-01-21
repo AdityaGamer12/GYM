@@ -1,144 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Workout Logger</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Family Workout Routine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #83a4d4, #b6fbff);
-      padding: 20px;
-      margin: 0;
-    }
-    .card {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-    h3 {
-      text-align: center;
-      color: #555;
-      font-size: 20px;
-      margin-top: 30px;
-      margin-bottom: 15px;
-    }
-    input, select, button {
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      background: #4caf50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #45a049;
-    }
-    .log {
-      margin-top: 15px;
-    }
-    .entry {
-      background: #f0f0f0;
-      padding: 12px 15px;
-      margin: 8px 0;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      color: #333;
-      flex-wrap: nowrap;
-    }
-    .entry .left {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .entry .right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-      font-size: 14px;
-      color: #666;
-    }
-    .entry button {
-      background: none;
-      border: none;
-      color: #e74c3c;
-      cursor: pointer;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-    .entry button:hover {
-      color: #c0392b;
-    }
-  </style>
+<style>
+body {
+  padding-top: calc(20px + env(safe-area-inset-top));
+  padding-right: calc(20px + env(safe-area-inset-right));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding-left: calc(20px + env(safe-area-inset-left)); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right,#83a4d4,#b6fbff); padding:20px; margin:0; }
+.card { background:#fff; padding:25px; border-radius:15px; max-width:850px; margin:auto; box-shadow:0 8px 25px rgba(0,0,0,0.25); }
+h1 { text-align:center; color:#333; font-size:32px; margin-bottom:20px; }
+h3 { text-align:center; color:#555; font-size:22px; margin-top:30px; margin-bottom:15px; }
+select, input, button { padding:12px; margin:10px 0; width:100%; border-radius:10px; border:1px solid #ccc; font-size:16px; box-sizing:border-box; }
+button { background:#4caf50; color:white; border:none; cursor:pointer; transition:0.3s; }
+button:hover { background:#45a049; }
+.log { margin-top:15px; }
+.entry { display:flex; justify-content:space-between; align-items:center; padding:12px; margin:8px 0; background:#f0f0f0; border-radius:10px; flex-wrap:wrap; }
+.entry .left { flex:1; word-break: break-word; white-space: normal; margin-right:10px; }
+.entry button { background:none; border:none; color:#e74c3c; cursor:pointer; font-size:16px; }
+.entry button:hover { color:#c0392b; }
+</style>
 </head>
 <body>
-
 <div class="card">
-  <h1>Family Workout Routine</h1>
+<h1>Family Workout Routine</h1>
 
-  <div id="authSection">
-    <button onclick="login()">Login with Google</button>
-  </div>
+<div id="authSection">
+  <button onclick="login()">Login with Google</button>
+</div>
 
-  <div id="appSection" style="display:none;">
-    <h3><p>Welcome, <span id="userName"></span>!</p></h3>
-    <button onclick="logout()">Logout</button>
+<div id="appSection" style="display:none;">
+  <h3>Welcome, <span id="userName"></span>!</h3>
+  <button onclick="logout()">Logout</button>
 
-    <h3>Log Today's Workout</h3>
-    <select id="workoutType" onchange="toggleCustomWorkout()">
-      <option value="" selected>Select Workout</option>
-      <option>Running</option>
-      <option>Walking</option>
-      <option>Gym</option>
-      <option>Yoga</option>
-      <option>Cycling</option>
-      <option>Sports</option>
-      <option>Others</option>
-    </select>
-    <input type="text" id="customWorkout" placeholder="Enter your workout" style="display:none; margin-top:8px;" />
-    <input type="number" id="minutes" placeholder="Minutes worked out" min="1" style="display:none;" />
-    <button onclick="saveWorkout()">Save</button>
+  <h3>Log Today's Workout</h3>
+  <select id="workoutType" onchange="toggleCustomWorkout()">
+    <option value="" selected>Select Workout</option>
+    <option>Running</option>
+    <option>Walking</option>
+    <option>Gym</option>
+    <option>Yoga</option>
+    <option>Cycling</option>
+    <option>Sports</option>
+    <option>Others</option>
+  </select>
+  <input type="text" id="customWorkout" placeholder="Enter your workout" style="display:none; margin-top:8px;" />
+  <input type="number" id="minutes" placeholder="Minutes worked out" min="1" style="display:none;" />
+  <button onclick="saveWorkout()">Save</button>
 
-    <h3>Your Past Workouts</h3>
-    <div id="myLogs" class="log"></div>
+  <h3>Your Past Workouts</h3>
+  <div id="myLogs" class="log"></div>
 
-    <h3>View Single User History</h3>
-    <select id="userFilter"><option value="">All users</option></select>
-    <div id="filteredLogs" class="log"></div>
-
-    <h3 id="publicHeading">Public Workouts (All Users)</h3>
-    <div id="publicLogs" class="log"></div>
-  </div>
+  <h3 id="publicHeading">Public Workouts (All Users)</h3>
+  <div id="publicLogs" class="log"></div>
+</div>
 </div>
 
 <script>
@@ -151,7 +77,6 @@ const firebaseConfig = {
   appId: "1:311117400080:web:07cebce89714fc5f08e295",
   measurementId: "G-LSWPE92JEW"
 };
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -159,64 +84,58 @@ const db = firebase.firestore();
 const authSection = document.getElementById("authSection");
 const appSection = document.getElementById("appSection");
 const userName = document.getElementById("userName");
-const publicHeading = document.getElementById("publicHeading");
 const customWorkoutInput = document.getElementById("customWorkout");
 const minutesInput = document.getElementById("minutes");
+let currentUserId = null;
 
 auth.onAuthStateChanged(user => {
-  if (user) {
-    authSection.style.display = "none";
-    appSection.style.display = "block";
+  if(user){
+    authSection.style.display="none";
+    appSection.style.display="block";
     userName.innerText = user.displayName || "User";
+    currentUserId = user.uid;
     loadMyWorkouts(user.uid);
     loadPublicWorkouts();
-    loadUserList();
   } else {
-    authSection.style.display = "block";
-    appSection.style.display = "none";
+    authSection.style.display="block";
+    appSection.style.display="none";
+    currentUserId = null;
   }
 });
 
-function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-function logout() { auth.signOut(); }
+function login(){ auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+function logout(){ auth.signOut(); }
 
-function toggleCustomWorkout() {
+function toggleCustomWorkout(){
   const type = document.getElementById("workoutType").value;
-  if (type === '') {
-    customWorkoutInput.style.display = 'none';
-    minutesInput.style.display = 'none';
+  if(type === ''){
+    customWorkoutInput.style.display='none';
+    minutesInput.style.display='none';
   } else {
-    customWorkoutInput.style.display = type === 'Others' ? 'block' : 'none';
-    minutesInput.style.display = 'block';
+    customWorkoutInput.style.display=type==='Others'?'block':'none';
+    minutesInput.style.display='block';
   }
 }
 
-function formatDateTime(d) {
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const yy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2,'0');
-  const mi = String(d.getMinutes()).padStart(2,'0');
+function formatDateTime(d){
+  const dd=String(d.getDate()).padStart(2,'0');
+  const mm=String(d.getMonth()+1).padStart(2,'0');
+  const yy=d.getFullYear();
+  const hh=String(d.getHours()).padStart(2,'0');
+  const mi=String(d.getMinutes()).padStart(2,'0');
   return `${dd}/${mm}/${yy} ${hh}:${mi}`;
 }
 
-function saveWorkout() {
-  const typeSelect = document.getElementById("workoutType").value;
-  const custom = customWorkoutInput.value.trim();
-  const type = typeSelect === 'Others' ? (custom || 'Others') : typeSelect;
+function saveWorkout(){
+  const typeSelect=document.getElementById("workoutType").value;
+  const custom=customWorkoutInput.value.trim();
+  const type = typeSelect==='Others'? (custom || 'Others') : typeSelect;
   const minutes = minutesInput.value.trim();
   const user = auth.currentUser;
-
-  if (!typeSelect) return alert("Select a workout");
-  if (!minutes) return alert("Enter minutes");
-
-  // Validate minutes strictly
-  if (isNaN(minutes) || Number(minutes) <= 0) {
-    return alert("Minutes must be a valid number greater than 0");
-  }
-
-  if (typeSelect === 'Others' && !custom) return alert("Enter your workout name");
-
+  if(!typeSelect) return alert("Select a workout");
+  if(!minutes) return alert("Enter minutes");
+  if(isNaN(minutes) || Number(minutes)<=0) return alert("Minutes must be a valid number greater than 0");
+  if(typeSelect==='Others' && !custom) return alert("Enter your workout name");
   db.collection("workouts").add({
     uid: user.uid,
     name: user.displayName || "User",
@@ -224,23 +143,23 @@ function saveWorkout() {
     minutes: Number(minutes),
     dateTime: formatDateTime(new Date()),
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    document.getElementById("workoutType").value = '';
-    customWorkoutInput.value = '';
-    minutesInput.value = '';
+  }).then(()=>{
+    document.getElementById("workoutType").value='';
+    customWorkoutInput.value='';
+    minutesInput.value='';
     toggleCustomWorkout();
   });
 }
 
-
-function loadMyWorkouts(uid) {
-  db.collection("workouts").where("uid","==",uid).onSnapshot(snap => {
-    const box = document.getElementById("myLogs"); box.innerHTML = "";
-    const rows = []; snap.forEach(doc=>rows.push({id: doc.id, ...doc.data()}));
+function loadMyWorkouts(uid){
+  db.collection("workouts").where("uid","==",uid).onSnapshot(snap=>{
+    const box=document.getElementById("myLogs"); box.innerHTML="";
+    const rows=[]; snap.forEach(doc=>rows.push({id:doc.id,...doc.data()}));
     rows.sort((a,b)=>(b.timestamp?.toMillis?.()||0)-(a.timestamp?.toMillis?.()||0));
     rows.forEach(d=>{
-      const when = d.dateTime||(d.timestamp&&formatDateTime(d.timestamp.toDate()))||"";
-      box.innerHTML += `<div class='entry'><div class='left'>${d.type} — ${d.minutes} min</div><div class='right'><span>${when}</span><button title='Delete' onclick='deleteWorkout("${d.id}")'><i class='fa fa-trash'></i></button></div></div>`;
+      const when=d.dateTime||(d.timestamp&&formatDateTime(d.timestamp.toDate()))||"";
+      const deleteBtn = currentUserId===d.uid ? `<button title='Delete' onclick='deleteWorkout("${d.id}")'><i class='fa fa-trash'></i></button>` : '';
+      box.innerHTML+=`<div class='entry'><div class='left'><b>${d.type} — ${d.minutes} min</b></div><div class='right' style='display:flex; align-items:center; gap:8px; white-space:nowrap;'><span>${when}</span>${deleteBtn}</div></div>`;
     });
   });
 }
@@ -251,51 +170,24 @@ function deleteWorkout(id){
   }
 }
 
-function loadPublicWorkouts() {
-  db.collection("workouts").limit(50).onSnapshot(snap => {
-    const box = document.getElementById("publicLogs"); box.innerHTML = "";
-    const rows = []; snap.forEach(doc=>rows.push(doc.data()));
-    rows.sort((a,b)=>(b.timestamp?.toMillis?.()||0)-(a.timestamp?.toMillis?.()||0));
-    rows.slice(0,20).forEach(d=>{
-      const when = d.dateTime||(d.timestamp&&formatDateTime(d.timestamp.toDate()))||"";
-      box.innerHTML += `<div class='entry'><div class='left'><b>${d.name}</b>: ${d.type} — ${d.minutes} min</div><div class='right'>${when}</div></div>`;
-    });
-  });
-}
-
-function loadUserList() {
-  const sel = document.getElementById("userFilter");
-  db.collection("workouts").onSnapshot(snap=>{
-    const users = {};
-    snap.forEach(doc=>{ const d=doc.data(); if(d.uid&&d.name) users[d.uid]=d.name; });
-    sel.innerHTML = '<option value="">All users</option>';
-    Object.keys(users).forEach(uid=>{ const opt=document.createElement("option"); opt.value=uid; opt.textContent=users[uid]; sel.appendChild(opt); });
-  });
-
-  sel.onchange = ()=>{
-    const uid = sel.value;
-    const filtered = document.getElementById("filteredLogs");
-    const publicBox = document.getElementById("publicLogs");
-    if(!uid){ filtered.innerHTML=""; publicBox.style.display="block"; publicHeading.style.display="block"; return; }
-    publicBox.style.display="none"; publicHeading.style.display="none";
-    loadUserHistory(uid);
-  };
-}
-
-function loadUserHistory(uid){
-  db.collection("workouts").where("uid","==",uid).onSnapshot(snap=>{
-    const box=document.getElementById("filteredLogs"); box.innerHTML="";
-    const rows=[]; snap.forEach(doc=>rows.push({id: doc.id, ...doc.data()}));
-    rows.sort((a,b)=>(b.timestamp?.toMillis?.()||0)-(a.timestamp?.toMillis?.()||0));
-    rows.forEach(d=>{
-      const when = d.dateTime||(d.timestamp&&formatDateTime(d.timestamp.toDate()))||"";
-      box.innerHTML += `<div class='entry'><div class='left'>${d.type} — ${d.minutes} min</div><div class='right'>${when}</div></div>`;
+function loadPublicWorkouts(){
+  db.collection("workouts").orderBy("timestamp","desc").limit(50).onSnapshot(snap=>{
+    const box=document.getElementById("publicLogs"); box.innerHTML="";
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const entry=document.createElement("div");
+      entry.className="entry";
+      entry.innerHTML=`
+        <div class='left'>
+          <div><b>${d.name}</b></div>
+          <div>${d.type} — ${d.minutes} min</div>
+        </div>
+        <div class='right' style='display:flex; align-items:center; gap:8px; white-space:nowrap;'>${d.dateTime || ''}</div>
+      `;
+      box.appendChild(entry);
     });
   });
 }
 </script>
-
 </body>
 </html>
-
-
